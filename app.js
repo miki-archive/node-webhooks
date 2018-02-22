@@ -1,7 +1,12 @@
+const bodyparser = require("body-parser");
 const express = require("express");
 const redis   = require("redis");
 const fs      = require("fs");
 const app     = express();
+
+app.use(bodyparser.json());
+
+var webhooks = {};
 
 var config = {
     port: 80,
@@ -29,24 +34,34 @@ var redisClient = redis.createClient(config.redisUrl);
 for(i = 0; i < config.webhooks.length; i++)
 {
     var webhook = config.webhooks[i];
-
-    console.log(webhook);
+    webhooks[webhook.url] = webhook;
 
     app.post(webhook.url, (req, res) => {
-        console.log("webhook received from " + webhook.authcode + ", data: " + req.body);
+        console.log(req.originalUrl);
+        let id = req.originalUrl.split('?')[0];
+        
+        console.log(id);
+        let hook = webhooks[id];
 
-        if(req.query.key == webhook.code)
+        console.log(hook);
+
+        console.log("webhook received from " + hook.authCode + ", data: " + JSON.stringify(req.body));
+
+        if(req.query.key == hook.code)
         {
-            redisClient.publish("webhook", {
-                auth_code: webhook.authCode,
+            redisClient.publish("webhook", JSON.stringify({
+                auth_code: hook.authCode,
                 data: JSON.stringify(req.body),
-            });
+            }));
 
-            return "OK";
+            res.send("ok.");
+            return;
         }
-        return "FAILED";
+        res.send("unauthorized.");
     });
 }
+
+console.log(webhooks);
 
 app.listen(config.port, () => {
     console.log("listening on " + config.port);
