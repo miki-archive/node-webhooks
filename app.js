@@ -29,7 +29,7 @@ var redisClient = redis.createClient(config.redisUrl);
 for(i = 0; i < config.webhooks.length; i++)
 {
     var webhook = config.webhooks[i];
-    
+
     console.log(webhook);
 
     app.post(webhook.url, (req, res) => {
@@ -39,9 +39,12 @@ for(i = 0; i < config.webhooks.length; i++)
         {
             redisClient.publish("webhook", {
                 auth_code: webhook.authCode,
-                data: req.body,
+                data: JSON.stringify(req.body),
             });
+
+            return "OK";
         }
+        return "FAILED";
     });
 }
 
