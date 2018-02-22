@@ -37,15 +37,9 @@ for(i = 0; i < config.webhooks.length; i++)
     webhooks[webhook.url] = webhook;
 
     app.post(webhook.url, (req, res) => {
-        console.log(req.originalUrl);
         let id = req.originalUrl.split('?')[0];
         
-        console.log(id);
         let hook = webhooks[id];
-
-        console.log(hook);
-
-        console.log("webhook received from " + hook.authCode + ", data: " + JSON.stringify(req.body));
 
         if(req.query.key == hook.code)
         {
