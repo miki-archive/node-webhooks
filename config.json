@@ -1,0 +1,1 @@
+{"port":80,"redisUrl":"redis://localhost:6379","webhooks":[{"authCode":"example","url":"/","code":"changeme"}]}
