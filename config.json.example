@@ -1,5 +1,6 @@
 {
     "port":80,
     "rabbitUrl":"amqp://localhost",
+    "rabbitExchange":"amq.direct",
     "webhooks":[{"authCode":"example","url":"/","code":"changeme"}]
 }

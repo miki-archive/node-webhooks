@@ -1,35 +1,22 @@
 const bodyparser = require("body-parser");
-const express = require("express");
-const rabbitmq = require('amqplib');
-const fs      = require("fs");
-const app     = express();
+const express    = require("express");
+const rabbitmq   = require('amqplib');
+const fs         = require("fs");
+const app        = express();
 
 app.use(bodyparser.json());
 
 var webhooks = {};
+var config = {};
 
-var config = {
-    port: 80,
-    redisUrl: "redis://localhost:6379",
-    webhooks: [
-        {
-            authCode: "example",
-            url:  "/",
-            code: "changeme",
-        },
-    ]
-};
-
-if(!fs.existsSync("./config.json"))
-{
-    fs.writeFileSync("./config.json", JSON.stringify(config));
-}
-else
+if(fs.existsSync("./config.json"))
 {
     config = JSON.parse(fs.readFileSync("./config.json"));
 }
 
-var amqpConn = rabbitmq.connect(config.rabbitUrl);
+var amqpConn = rabbitmq.connect(config.rabbitUrl, {
+    defaultExchangeName: config.rabbitExchange
+});
 
 for(i = 0; i < config.webhooks.length; i++)
 {
