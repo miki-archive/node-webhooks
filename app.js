@@ -39,8 +39,9 @@ for(i = 0; i < config.webhooks.length; i++)
                         auth_code: hook.authCode,
                         data: req.body
                     };
-
-                  return ch.sendToQueue("webhooks", Buffer.from(JSON.stringify(payload)));
+                    
+                    console.log(`[SENT] => ${payload.auth_code}`)
+                    return ch.sendToQueue("webhooks", Buffer.from(JSON.stringify(payload)));
                 });
               }).catch(console.warn);
 
