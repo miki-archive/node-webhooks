@@ -1,1 +1,5 @@
-{"port":80,"redisUrl":"redis://localhost:6379","webhooks":[{"authCode":"example","url":"/","code":"changeme"}]}
+{
+    "port":80,
+    "rabbitUrl":"amqp://localhost",
+    "webhooks":[{"authCode":"example","url":"/","code":"changeme"}]
+}

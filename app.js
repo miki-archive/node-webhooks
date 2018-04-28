@@ -1,6 +1,6 @@
 const bodyparser = require("body-parser");
 const express = require("express");
-const redis   = require("redis");
+const rabbitmq = require('amqplib');
 const fs      = require("fs");
 const app     = express();
 
@@ -29,7 +29,7 @@ else
     config = JSON.parse(fs.readFileSync("./config.json"));
 }
 
-var redisClient = redis.createClient(config.redisUrl);
+var amqpConn = rabbitmq.connect(config.rabbitUrl);
 
 for(i = 0; i < config.webhooks.length; i++)
 {
@@ -38,15 +38,18 @@ for(i = 0; i < config.webhooks.length; i++)
 
     app.post(webhook.url, (req, res) => {
         let id = req.originalUrl.split('?')[0];
-        
         let hook = webhooks[id];
 
         if(req.query.key == hook.code)
         {
-            redisClient.publish("webhook", JSON.stringify({
-                auth_code: hook.authCode,
-                data: JSON.stringify(req.body),
-            }));
+            amqpConn.then(function(conn) {
+                return conn.createChannel();
+              }).then(function(ch) {
+                return ch.assertQueue("webhooks").then(function(ok) {
+                  console.log(req.body);
+                  return ch.sendToQueue("webhooks", Buffer.from(JSON.stringify(req.body)));
+                });
+              }).catch(console.warn);
 
             res.send("ok.");
             return;
