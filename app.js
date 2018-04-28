@@ -31,10 +31,16 @@ for(i = 0; i < config.webhooks.length; i++)
         {
             amqpConn.then(function(conn) {
                 return conn.createChannel();
-              }).then(function(ch) {
-                return ch.assertQueue("webhooks").then(function(ok) {
-                  console.log(req.body);
-                  return ch.sendToQueue("webhooks", Buffer.from(JSON.stringify(req.body)));
+              }).then(function(ch) 
+              {
+                return ch.assertQueue("webhooks").then(function(ok) 
+                {
+                    let payload = {
+                        auth_code: hook.authCode,
+                        data: req.body
+                    };
+
+                  return ch.sendToQueue("webhooks", Buffer.from(JSON.stringify(payload)));
                 });
               }).catch(console.warn);
 
