@@ -1,0 +1,32 @@
+{
+  "name": "node-webhooks",
+  "version": "1.0.0",
+  "description": "modular webhook manager and publisher",
+  "main": "app.js",
+  "dependencies": {
+    "amqplib": "^0.5.2",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "pg": "^7.4.1",
+    "redis": "^2.8.0",
+    "ws": "^4.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/velddev/py-webhooks.git"
+  },
+  "keywords": [
+    "webhook",
+    "manager"
+  ],
+  "author": "velddev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/velddev/py-webhooks/issues"
+  },
+  "homepage": "https://github.com/velddev/py-webhooks#readme"
+}
