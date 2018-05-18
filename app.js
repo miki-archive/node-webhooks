@@ -85,8 +85,6 @@ async function init()
 
                 var assert = await channel.assertQueue("webhooks");
 
-                console.log(assert);
-
                 let payload = {
                     auth_code: hook.authCode,
                     data: JSON.stringify(req.body)
