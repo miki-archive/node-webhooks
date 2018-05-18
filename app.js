@@ -97,7 +97,7 @@ async function init()
                 console.log(`[SENT] => ${payload.auth_code}`)
                 await channel.sendToQueue("webhooks", Buffer.from(JSON.stringify(payload)));
 
-                datadog.increment('webhooks.received', 1, 1, { "webhook-id": auth_code });
+                datadog.increment('webhooks.received', 1, 1, { "webhook-id": payload.auth_code });
                 res.send("ok.");
                 return;
             }
