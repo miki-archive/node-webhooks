@@ -2,7 +2,9 @@ const bodyparser = require("body-parser");
 const express    = require("express");
 const rabbitmq   = require('amqplib');
 const fs         = require("fs");
+const statsd     = require("hot-shots");
 const app        = express();
+const datadog    = new statsd();
 
 var conn = null;
 
@@ -33,6 +35,7 @@ async function initConnection()
 
         newConn.on('error', async (err) => {
             console.log("[CRIT] CN " + err);
+            datadog.check('webhooks.status', datadog.CHECKS.CRITICAL);
             conn = getConnection();
         });
 
@@ -61,6 +64,7 @@ async function getConnection()
         break;
     }
     console.log("[ OK ] >> (re)connected")
+    datadog.check('webhooks.status', datadog.CHECKS.OK);
     return conn;
 }
 
@@ -93,6 +97,7 @@ async function init()
                 console.log(`[SENT] => ${payload.auth_code}`)
                 await channel.sendToQueue("webhooks", Buffer.from(JSON.stringify(payload)));
 
+                datadog.increment('webhooks.received', 1, 1, { "webhook-id": auth_code });
                 res.send("ok.");
                 return;
             }
