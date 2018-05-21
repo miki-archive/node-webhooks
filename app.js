@@ -104,7 +104,6 @@ async function init()
             res.send("unauthorized.");
         });
     }
-
     console.log(webhooks);
 }
 
